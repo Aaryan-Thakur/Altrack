@@ -5,12 +5,12 @@ const client = new Client({
     user:"postgres",
     port:5432,
     password:"Aaryan@sql31",
-    database:"postgres"
+    database:"altrack"
 })
 
 client.connect();
 
-client.query(`Select * from users`,(err,res)=>{
+client.query(`SELECT * FROM users`,(err,res)=>{
     if(!err){
         console.log(res.rows);
     }else{
