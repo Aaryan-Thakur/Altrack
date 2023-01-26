@@ -34,6 +34,8 @@ import CameraPage from "./Pages/CameraPage";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PPage from "./Pages/PPage";
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
 
 
 
@@ -42,7 +44,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomePage} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Home"  component={HomePage}   options={{ headerBackVisible:false }} />
         <Stack.Screen name="Camera" component={CameraPage}/>
         <Stack.Screen name="PPage" component={PPage}/>
       </Stack.Navigator>
