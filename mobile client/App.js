@@ -46,7 +46,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Home"  component={HomePage}   options={{ headerBackVisible:false }} />
+        <Stack.Screen name="Home"  component={HomePage}   options={{ headerShown:false }} />
         <Stack.Screen name="Camera" component={CameraPage}/>
         <Stack.Screen name="PPage" component={PPage}/>
       </Stack.Navigator>
