@@ -28,7 +28,7 @@ const Register = ({ navigation }) => {
   }
 
   const submit = async (data) => {
-    const loggedInResponse = await fetch('http://192.168.0.101:3000/api/register', {
+    const loggedInResponse = await fetch('http://192.168.0.104:3000/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

@@ -94,8 +94,9 @@ async function addUserFoodData(req, response) {
         a.slot = "SUP";
       }
     }
+    console.log(a)
     client.query(
-      `INSERT INTO fooddata VALUES (default,${req.body.id},'${a.food}',${a.weight},${a.cal},'${a.imgurl}','${a.date}','${a.time}','${a.slot}')`,
+      `INSERT INTO fooddata VALUES (default,${req.body.id},'${a.food}',${a.weight},${a.cal},'${a.imgurl}','${a.date}','${a.time}','${a.slot}',${a.id})`,
       (err, res) => {
         if (!err) {
         } else {
@@ -128,5 +129,41 @@ async function delentry(req, res) {
 
 }
 
+async function entryInfo(req, res) {
+  const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "Aaryan@sql31",
+    database: "altrack",
+  });
 
-module.exports = { fooddata, getFoodData, addUserFoodData,delentry };
+  await client.connect();
+  result = await client.query(`SELECT * FROM fcirdata WHERE id = ${req.body.id}`);
+  console.log(req.body)
+  console.log(result.rows)
+  client.end();
+
+
+  res.status(201).json(result.rows[0]);
+}
+
+async function updateEntry(req, res) {
+  const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "Aaryan@sql31",
+    database: "altrack",
+  });
+
+  await client.connect();
+  await client.query(`UPDATE fooddata SET weight=${req.body.weight},slot='${req.body.slot}',calories=${req.body.cal} WHERE foodid=${req.body.id}`);
+  client.end();
+
+  
+  res.status(201).json("safe");
+}
+
+
+module.exports = { fooddata, getFoodData, addUserFoodData,delentry,entryInfo,updateEntry };

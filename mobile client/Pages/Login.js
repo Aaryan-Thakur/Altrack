@@ -6,6 +6,8 @@ import { useForm, Controller } from "react-hook-form";
 import { setLogin } from '../state';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import Config from "react-native-config";
+
 
 
 
@@ -16,7 +18,7 @@ const Login = ({navigation}) => {
 
 
   const submit = async (data) => {
-    const loggedInResponse = await fetch('http://192.168.0.101:3000/api/login', {
+    const loggedInResponse = await fetch(`http://192.168.0.104:3000/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -87,7 +89,7 @@ const Login = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-    <Text>{token}</Text>
+    <Text>{Config.API_URL}</Text>
     {/* EMAIL FIELD */}
     <Controller
           control={control}

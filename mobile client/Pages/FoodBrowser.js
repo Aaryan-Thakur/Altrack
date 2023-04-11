@@ -11,7 +11,7 @@ const FoodBrowser = () => {
 
 
   React.useEffect(() => {
-    fetch("http://192.168.0.101:3000/api/data")
+    fetch("http://192.168.0.104:3000/api/data")
       .then((response) => response.json())
       .then((data) => {
         setdata(data);

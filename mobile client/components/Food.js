@@ -38,7 +38,7 @@ const Food = (props) => {
 
   const delentry = () =>{
 
-    fetch("http://192.168.0.101:3000/api/delentry", {
+    fetch("http://192.168.0.104:3000/api/delentry", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -89,7 +89,6 @@ const Food = (props) => {
         </MenuTrigger>
         <MenuOptions>
           <MenuOption onSelect={()=>{open()}} value={1} text="Open" />
-          <MenuOption value={2} text="Edit" />
           <MenuOption onSelect={()=>{delentry()}} value={3}>
             <Text style={{ color: "red" }}>Delete</Text>
           </MenuOption>

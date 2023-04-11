@@ -148,7 +148,7 @@ const AddFood = ({navigation}) => {
     })
 
     console.log(udata);
-    fetch("http://192.168.0.101:3000/api/addfood", {
+    fetch("http://192.168.0.104:3000/api/addfood", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -228,6 +228,8 @@ const AddFood = ({navigation}) => {
       <ScrollView style={styles.scrollcontainer}>
         {udata.map((item) => (
           <View style={styles2.card} key={item.id}>
+
+            
             <Picker
               style={styles.picker}
               selectedValue={item.slot}
@@ -244,6 +246,8 @@ const AddFood = ({navigation}) => {
                 />
               ))}
             </Picker>
+
+
             <View style={styles2.containerF}>
               <Image
                 style={styles2.tinyLogoF}

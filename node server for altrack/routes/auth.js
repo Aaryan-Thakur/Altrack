@@ -34,5 +34,14 @@ router.post('/delentry', function(req, res, next) {
   food.delentry(req,res);
 });
 
+router.post('/entry', function(req, res, next) {
+  food.entryInfo(req,res);
+});
+
+router.post('/uentry', function(req, res, next) {
+  food.updateEntry(req,res);
+});
+
+
 module.exports = router;
 

@@ -1,27 +1,117 @@
 import * as React from "react";
-import { DataTable, TextInput } from "react-native-paper";
-import { View, Text, ScrollView, Image } from "react-native";
+import { Button } from "react-native-paper";
+import { View, Text, ScrollView, Image, TextInput } from "react-native";
 import { set } from "date-fns";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { Picker } from "@react-native-picker/picker";
+import { useState, useEffect } from "react";
+import FoodItem from "./FoodItem";
+
+import { useNavigation } from '@react-navigation/native';
+import { CommonActions } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setTGC } from "../state";
+
 const Entry = (props) => {
+
+  let trigger = useSelector((state) => state.tgc);
+  const dispatch = useDispatch();
+
+
+  const navigation = useNavigation();
+
+
+
   const data = props.route.params.data;
+  console.log(data)
   const date = useSelector((state) => state.date.date);
 
   const [pickervalues, setpickervalues] = React.useState([
-    { key: 1, label: "Auto", value: "Auto" },
-    { key: 2, label: "Breakfast", value: "BRF" },
-    { key: 3, label: "Brunch", value: "BRU" },
-    { key: 4, label: "Lunch", value: "LUN" },
-    { key: 5, label: "Snacks", value: "SNK" },
-    { key: 6, label: "Dinner", value: "DIN" },
-    { key: 7, label: "Supper", value: "SUP" },
+    { key: 1, label: "Breakfast", value: "BRF" },
+    { key: 2, label: "Brunch", value: "BRU" },
+    { key: 3, label: "Lunch", value: "LUN" },
+    { key: 4, label: "Snacks", value: "SNK" },
+    { key: 5, label: "Dinner", value: "DIN" },
+    { key: 6, label: "Supper", value: "SUP" },
   ]);
 
-  console.log(data);
+  const [Weight, setWeight] = useState(data.weight);
+  const [Slot, setSlot] = useState(data.slot);
+
+  const [fetchdata, setfetchdata] = useState({
+    food: "",
+    cal: 0,
+    unit: "",
+    ingredients: "",
+    recipe: "",
+    url: "https://res.cloudinary.com/dn7xzx3gy/image/upload/v1679733347/photo-1546069901-ba9599a7e63c_rzgbxd.jpg",
+    id: "",
+  });
+
+  const onWeightUpdate = (props) => {
+    const regex = /^\d{0,4}(\.\d{0,1})?$/;
+    const isValid = regex.test(props);
+    if (isValid) {
+      setWeight(props);
+    }
+  };
+
+  useEffect(() => {
+    fetch("http://192.168.0.104:3000/api/entry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        id: data.foodid,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setfetchdata(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  const toHome = () => {
+    navigation.navigate("Home");
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      })
+    );
+  }
+
+  const update = () => {
+    fetch("http://192.168.0.104:3000/api/uentry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        id: data.foodid,
+        weight: Weight,
+        cal:  Weight * fetchdata.cal * 0.01,
+        slot: Slot,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        toHome()
+        dispatch(setTGC())
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View>
         <View style={styles.datecontainer}>
           <Text style={styles.date}>{date}</Text>
@@ -31,8 +121,10 @@ const Entry = (props) => {
       <View style={styles.card}>
         <Picker
           style={styles.picker}
-          selectedValue={data.slot}
-          onValueChange={(picker) => console.log(picker)}
+          selectedValue={Slot}
+          onValueChange={(picker) => {
+            setSlot(picker);
+          }}
         >
           {pickervalues.map((item) => (
             <Picker.Item
@@ -44,22 +136,32 @@ const Entry = (props) => {
           ))}
         </Picker>
 
-        <View style={styles.containerF}>
 
+        <View style={styles.containerF}>
           <View style={styles.weight}>
             <TextInput
-              value={data.weight}
-              onChangeText={(value) => console.log(value)}
+              value={Weight}
+              onChangeText={(value) => onWeightUpdate(value)}
               keyboardType="numeric"
               style={styles.weightinput}
             ></TextInput>
-            <Text>g</Text>
+            <Text style={{ fontSize: 20 }}>g</Text>
           </View>
           <View style={styles.calorie}>
-            <Text>{`${Math.round(data.weight * 25 * 0.01)} cal`}</Text>
+            <Text style={{ fontSize: 20 }}>{`${Math.round(
+              Weight * fetchdata.cal * 0.01
+            )} cal`}</Text>
           </View>
+          <Button
+            mode="contained"
+            icon="check"
+            style={styles.button}
+            labelStyle={styles.buttonL}
+            onPress={()=>{update()}}
+          ></Button>
         </View>
       </View>
+      <FoodItem data={fetchdata} />
     </View>
   );
 };
@@ -101,6 +203,7 @@ const styles = StyleSheet.create({
     width: "90%",
     alignItems: "center",
     paddingVertical: 10,
+    justifyContent: "space-between",
   },
   tinyLogoF: {
     width: 65,
@@ -114,6 +217,7 @@ const styles = StyleSheet.create({
     width: 70,
     marginRight: 5,
     justifyContent: "flex-end",
+    marginLeft: 15,
   },
   weightinput: {
     backgroundColor: "#e8e1ed",
@@ -122,14 +226,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginRight: 5,
     height: 40,
-    width: 100,
+    width: 70,
     textAlign: "right",
+    fontSize: 20,
   },
   calorie: {
     flex: 0,
     flexDirection: "row",
     justifyContent: "flex-end",
-    width: 72,
+    width: 100,
+    fontSize: 20,
+    marginLeft: -30,
   },
   picker: {
     width: "36%",
@@ -142,6 +249,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     paddingRight: 0,
     margin: 0,
+  },
+  button: {
+    height: 60,
+    marginBottom: 15,
+    marginLeft: 15,
+    padding: 0,
+  },
+  buttonL: {
+    marginRight: 10,
+    marginBottom: 10,
+    fontSize: 25,
   },
 });
 

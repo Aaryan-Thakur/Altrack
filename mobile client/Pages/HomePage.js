@@ -18,7 +18,7 @@ export default function HomePage({ navigation }) {
   let [cal, setcal] = useState(0);
 
   useEffect(() => {
-    fetch("http://192.168.0.101:3000/api/getfood")
+    fetch("http://192.168.0.104:3000/api/getfood")
       .then((response) => response.json())
       .then((data) => {
         dispatch(setFoodData({ data: data }));
@@ -54,7 +54,7 @@ export default function HomePage({ navigation }) {
   let auth = useSelector((state) => state.auth);
 
   function getfood() {
-    fetch("http://192.168.0.101:3000/api/food", {
+    fetch("http://192.168.0.104:3000/api/food", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -82,6 +82,7 @@ export default function HomePage({ navigation }) {
   useEffect(() => {
     getfood();
   }, [date]);
+
 
   let trigger = useSelector((state) => state.tgc);
   useEffect(() => {
