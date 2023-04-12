@@ -14,15 +14,19 @@ import { Picker } from "@react-native-picker/picker";
 import { Searchbar, Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
+const AddFood = (props) => {
+  if(!(props.route.params==undefined)){
+    console.log(props.route.params.prediction[0].class)
+    
+  }
+  const navigation = useNavigation();
 
-const AddFood = ({navigation}) => {
   let data = useSelector((state) => state.getfood.data);
   const date = useSelector((state) => state.date.date);
   const auth = useSelector((state) => state.auth);
-  const URL = useSelector(state => state.url.URL);
-
-
+  const URL = useSelector((state) => state.url.URL);
 
   const [selectedFood, setselectedFood] = React.useState([
     false,
@@ -30,7 +34,7 @@ const AddFood = ({navigation}) => {
     -1,
     "",
     "",
-    {}
+    {},
   ]);
 
   const [pickervalues, setpickervalues] = React.useState([
@@ -43,11 +47,10 @@ const AddFood = ({navigation}) => {
     { key: 7, label: "Supper", value: "SUP" },
   ]);
 
-
   let [udata, setuData] = React.useState([]);
 
   const onChangeSearch = (query) => {
-    setselectedFood([query.length > 0, query, -1, "", ""]);
+    setselectedFood([query.length > 0, query, -1, "", "", {}]);
   };
 
   const filteredData = data.filter((item) =>
@@ -55,7 +58,14 @@ const AddFood = ({navigation}) => {
   );
 
   const onSelect = (props) => {
-    setselectedFood([false, props.food, props.id, props.imgurl, props.stdc]);
+    setselectedFood([
+      false,
+      props.food,
+      props.id,
+      props.imgurl,
+      props.stdc,
+      props.ndata,
+    ]);
   };
 
   const checkifalreadyexists = (id) => {
@@ -64,6 +74,7 @@ const AddFood = ({navigation}) => {
   };
 
   const onAdd = (props) => {
+    console.log(props.ndata);
     if (
       !selectedFood[0] &&
       props.food != "" &&
@@ -76,8 +87,7 @@ const AddFood = ({navigation}) => {
         second: "2-digit",
       });
 
-
-      setselectedFood([false, "", -1, "", ""]);
+      setselectedFood([false, "", -1, "", "", {}]);
 
       udata.push({
         id: props.id,
@@ -89,17 +99,16 @@ const AddFood = ({navigation}) => {
         date: date,
         time: formattedTime,
         slot: "Auto",
-        carbs:0,
-        protiens:0,
-        fats:0
+        ndata:props.ndata,
+        carbs: 0,
+        protiens: 0,
+        fats: 0,
       });
-      console.log(udata);
     }
   };
 
   const clear = () => {
     setuData([]);
-    console.log(udata);
   };
 
   const onWeightUpdate = (props) => {
@@ -112,12 +121,15 @@ const AddFood = ({navigation}) => {
             ...item,
             weight: props.value,
             cal: Math.round(item.stdc * props.value * 0.01),
+            carbs:Math.round(item.ndata.c * 0.01 * props.value),
+            protiens:Math.round(item.ndata.p * 0.01 * props.value),
+            fats:Math.round(item.ndata.f * 0.01 * props.value),
           };
         }
         return item;
       });
       setuData(updatedData);
-      console.log(updatedData);
+      console.log(updatedData)
     }
   };
 
@@ -132,7 +144,6 @@ const AddFood = ({navigation}) => {
       return item;
     });
     setuData(updatedData);
-    console.log(updatedData);
   };
 
   function toHome() {
@@ -146,39 +157,43 @@ const AddFood = ({navigation}) => {
   }
 
   const submit = () => {
-    udata.map((item)=>{
-      if(item.weight==''){
-        ToastAndroid.show('Please enter weights for all entries', ToastAndroid.SHORT);
-      }
-      else if(item.weight==0){
-        ToastAndroid.show('Please enter weights for all entries', ToastAndroid.SHORT);
-      }
-      else{
-        console.log(udata);
+    udata.map((item) => {
+      if (item.weight == "") {
+        ToastAndroid.show(
+          "Please enter weights for all entries",
+          ToastAndroid.SHORT
+        );
+      } else if (item.weight == 0) {
+        ToastAndroid.show(
+          "Please enter weights for all entries",
+          ToastAndroid.SHORT
+        );
+      } else {
         fetch(`${URL}/api/addfood`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json; charset=utf-8",
           },
           body: JSON.stringify({
-            id:auth.user,
+            id: auth.user,
             data: udata,
           }),
         })
           .then((response) => response.json())
           .then((data) => {
-            if(data=="added"){
-              ToastAndroid.show('Entries Addded Successfully', ToastAndroid.SHORT);
-              toHome()
+            if (data == "added") {
+              ToastAndroid.show(
+                "Entries Addded Successfully",
+                ToastAndroid.SHORT
+              );
+              toHome();
             }
           })
           .catch((error) => {
             console.error(error);
           });
       }
-    })
-
-
+    });
   };
 
   return (
@@ -207,6 +222,7 @@ const AddFood = ({navigation}) => {
               id: selectedFood[2],
               imgurl: selectedFood[3],
               stdc: selectedFood[4],
+              ndata: selectedFood[5],
             })
           }
           onLongPress={() => clear()}
@@ -226,6 +242,7 @@ const AddFood = ({navigation}) => {
                     id: item.id,
                     imgurl: item.url,
                     stdc: item.cal,
+                    ndata: { c: item.carb, p: item.protein, f: item.fat },
                   })
                 }
               >
@@ -239,8 +256,6 @@ const AddFood = ({navigation}) => {
       <ScrollView style={styles.scrollcontainer}>
         {udata.map((item) => (
           <View style={styles2.card} key={item.id}>
-
-            
             <Picker
               style={styles.picker}
               selectedValue={item.slot}
@@ -258,7 +273,6 @@ const AddFood = ({navigation}) => {
               ))}
             </Picker>
 
-
             <View style={styles2.containerF}>
               <Image
                 style={styles2.tinyLogoF}
@@ -267,12 +281,12 @@ const AddFood = ({navigation}) => {
                 }}
               ></Image>
               <Text style={styles2.title}>{item.food}</Text>
-              
+
               <View style={styles2.weight}>
                 <TextInput
                   value={item.weight.toString()}
                   onChangeText={(value) =>
-                    onWeightUpdate({ value: value, id: item.id })
+                    onWeightUpdate({ value: value, id: item.id})
                   }
                   keyboardType="numeric"
                   style={styles2.weightinput}
@@ -284,9 +298,11 @@ const AddFood = ({navigation}) => {
                   item.weight * item.stdc * 0.01
                 )} cal`}</Text>
               </View>
-            <View>
-              
             </View>
+            <View style={styles2.ncount}>
+              <Text>Carb:{Math.round(item.ndata.c * 0.01 * item.weight)}</Text>
+              <Text>Protein:{Math.round(item.ndata.p * 0.01 * item.weight)}</Text>
+              <Text>Fat:{Math.round(item.ndata.f * 0.01 * item.weight)}</Text>
             </View>
           </View>
         ))}
@@ -348,7 +364,7 @@ const styles = StyleSheet.create({
     width: "75%",
     paddingHorizontal: 10,
     backgroundColor: "#f3edf7",
-    maxHeight:"50%"
+    maxHeight: "50%",
   },
   listitem: {
     fontSize: 25,
@@ -426,6 +442,11 @@ const styles2 = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     width: 72,
+  },
+  ncount: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
 });
 

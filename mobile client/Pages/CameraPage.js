@@ -70,14 +70,20 @@ export default function CameraPage({ navigation }) {
         data: photo.base64,
       })
         .then(function (response) {
-          console.log(response.data);
-          prediction = response.data;
+          console.log(response.data.predictions);
+          prediction = response.data.predictions;
         })
         .catch(function (error) {
           console.log(error.message);
         });
 
-      navigation.navigate("PPage", { prediction });
+      if (prediction == []) {
+        toHome();
+      }
+      else{
+        navigation.navigate("AddFood", { prediction });
+      }
+
     };
 
     let savePhoto = () => {
@@ -85,6 +91,16 @@ export default function CameraPage({ navigation }) {
         setPhoto(undefined);
       });
     };
+
+    function toHome() {
+      navigation.navigate("Home");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        })
+      );
+    }
 
     return (
       <SafeAreaView style={styles.container}>
