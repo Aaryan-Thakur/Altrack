@@ -46,7 +46,21 @@ async function fooddata(req, res) {
     return acc + obj.calories;
   }, 0);
 
-  res.status(201).json({food:food,tcal:sumOfCalories});
+  const sumofCarbs = result.rows.reduce((acc, obj) => {
+    return acc + obj.carbs;
+  }, 0);
+
+  const sumofProteins = result.rows.reduce((acc, obj) => {
+    return acc + obj.proteins;
+  }, 0);
+
+  const sumofFats = result.rows.reduce((acc, obj) => {
+    return acc + obj.fats;
+  }, 0);
+
+  console.log(result.rows)
+
+  res.status(201).json({food:food,tcal:sumOfCalories,ndata:{c:sumofCarbs,p:sumofProteins,f:sumofFats}});
 }
 
 async function getFoodData(req, res) {
@@ -61,6 +75,8 @@ async function getFoodData(req, res) {
   await client.connect();
   result = await client.query(`SELECT * FROM fcirdata`);
   client.end();
+
+  console.log(result.rows)
 
   res.status(201).json(result.rows);
 }
@@ -96,7 +112,7 @@ async function addUserFoodData(req, response) {
     }
     console.log(a)
     client.query(
-      `INSERT INTO fooddata VALUES (default,${req.body.id},'${a.food}',${a.weight},${a.cal},'${a.imgurl}','${a.date}','${a.time}','${a.slot}',${a.id})`,
+      `INSERT INTO fooddata VALUES (default,${req.body.id},'${a.food}',${a.weight},${a.cal},'${a.imgurl}','${a.date}','${a.time}','${a.slot}',${a.id},${a.carbs},${a.protiens},${a.fats})`,
       (err, res) => {
         if (!err) {
         } else {

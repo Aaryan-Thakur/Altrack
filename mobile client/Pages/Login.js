@@ -16,9 +16,12 @@ const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.auth.token);
 
+  const URL = useSelector(state => state.url.URL);
+
+
 
   const submit = async (data) => {
-    const loggedInResponse = await fetch(`http://192.168.0.104:3000/api/login`, {
+    const loggedInResponse = await fetch(`${URL}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

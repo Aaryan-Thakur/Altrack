@@ -11,6 +11,8 @@ import { setLogin } from "../state";
 const Register = ({ navigation }) => {
   const user = useSelector(state => state.user)
   const token = useSelector(state => state.token)
+  const URL = useSelector(state => state.url.URL);
+
 
   const [pass, changePass] = React.useState("");
 
@@ -28,7 +30,7 @@ const Register = ({ navigation }) => {
   }
 
   const submit = async (data) => {
-    const loggedInResponse = await fetch('http://192.168.0.104:3000/api/register', {
+    const loggedInResponse = await fetch(`${URL}/api/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

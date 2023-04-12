@@ -32,6 +32,10 @@ const initialTGC={
   delete:0
 }
 
+const initialURL={
+  URL:"http://192.168.0.102:3000"
+}
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -85,6 +89,14 @@ export const TGCSlice = createSlice({
   },
 });
 
+export const urlSlice = createSlice({
+  name: "url",
+  initialState: initialURL,
+  reducers: {
+  },
+});
+
+
 
 
 const rootReducer = combineReducers({
@@ -93,6 +105,8 @@ const rootReducer = combineReducers({
   food: foodSlice.reducer,
   getfood: getfoodSlice.reducer,
   tgc: TGCSlice.reducer,
+  url: urlSlice.reducer,
+
 
 });
 
@@ -101,7 +115,6 @@ export const {setDate} = dateSlice.actions;
 export const {setFood} = foodSlice.actions;
 export const {setFoodData} = getfoodSlice.actions;
 export const {setTGC} = TGCSlice.actions;
-
 
 
 

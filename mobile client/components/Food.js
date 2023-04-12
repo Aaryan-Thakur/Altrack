@@ -25,6 +25,8 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const Food = (props) => {
+  const URL = useSelector(state => state.url.URL);
+
   const navigation = useNavigation();
 
   const [visible, setVisible] = React.useState(false);
@@ -38,7 +40,7 @@ const Food = (props) => {
 
   const delentry = () =>{
 
-    fetch("http://192.168.0.104:3000/api/delentry", {
+    fetch(`${URL}/api/delentry`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",

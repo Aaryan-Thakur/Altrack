@@ -38,7 +38,7 @@ import FoodBrowser from "./Pages/FoodBrowser";
 import RecipeB from "./Pages/RecipeB";
 import AddFood from "./Pages/AddFood";
 import Entry from "./Pages/Entry";
-
+import CameraPage from "./Pages/CameraPage";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -46,7 +46,6 @@ const store = configureStore({
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-
 
   return (
     <Provider store={store}>
@@ -62,8 +61,9 @@ export default function App() {
           <Stack.Screen name="FoodB" component={FoodBrowser} />
           <Stack.Screen name="RecipeB" component={RecipeB} />
           <Stack.Screen name="AddFood" component={AddFood} />
-          <Stack.Screen name="Entry" component={Entry}
-/>
+          <Stack.Screen name="Entry" component={Entry} />
+          <Stack.Screen name="Camera" component={CameraPage} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -17,6 +17,7 @@ const Entry = (props) => {
 
   let trigger = useSelector((state) => state.tgc);
   const dispatch = useDispatch();
+  const URL = useSelector(state => state.url.URL);
 
 
   const navigation = useNavigation();
@@ -58,7 +59,7 @@ const Entry = (props) => {
   };
 
   useEffect(() => {
-    fetch("http://192.168.0.104:3000/api/entry", {
+    fetch(`${URL}/api/entry`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -87,7 +88,7 @@ const Entry = (props) => {
   }
 
   const update = () => {
-    fetch("http://192.168.0.104:3000/api/uentry", {
+    fetch(`${URL}/api/uentry`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",

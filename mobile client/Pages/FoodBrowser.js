@@ -2,16 +2,18 @@ import * as React from "react";
 import { DataTable } from "react-native-paper";
 import { View, Text, ScrollView } from "react-native";
 import { set } from "date-fns";
-
+import { useSelector } from "react-redux";
 
 const FoodBrowser = () => {
   const [data, setdata] = React.useState([]);
   const [page, setpage] = React.useState(0);
 
+  const URL = useSelector(state => state.url.URL);
+
 
 
   React.useEffect(() => {
-    fetch("http://192.168.0.104:3000/api/data")
+    fetch(`${URL}/api/data`)
       .then((response) => response.json())
       .then((data) => {
         setdata(data);

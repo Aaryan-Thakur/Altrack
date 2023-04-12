@@ -14,14 +14,19 @@ export default function HomePage({ navigation }) {
   const data1 = useSelector((state) => state.getfood.data);
 
   const delcount = useSelector((state) => state.tgc);
+  const URL = useSelector(state => state.url.URL);
+
 
   let [cal, setcal] = useState(0);
+  let [nutri, setnutri] = useState({c:0,p:0,f:0});
+
 
   useEffect(() => {
-    fetch("http://192.168.0.104:3000/api/getfood")
+    fetch(`${URL}/api/getfood`)
       .then((response) => response.json())
       .then((data) => {
         dispatch(setFoodData({ data: data }));
+        console.log(data1)
       })
       .catch((error) => {
         console.error(error);
@@ -54,7 +59,7 @@ export default function HomePage({ navigation }) {
   let auth = useSelector((state) => state.auth);
 
   function getfood() {
-    fetch("http://192.168.0.104:3000/api/food", {
+    fetch(`${URL}/api/food`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -69,6 +74,7 @@ export default function HomePage({ navigation }) {
         dispatch(setFood({ food: data.food }));
 
         setcal(data.tcal);
+        setnutri(data.ndata)
       })
       .catch((error) => {
         console.error(error);
@@ -161,7 +167,11 @@ export default function HomePage({ navigation }) {
           <View style={styles.rcal}>
             <Text style={styles.rcalt1}>Total Cal Count</Text>
             <Text style={styles.rcalt2}>{cal}</Text>
-            <Text></Text>
+            <View style={styles.ncount}>
+            <Text>Carb:{nutri.c}</Text>
+            <Text>Protein:{nutri.p}</Text>
+            <Text>Fat:{nutri.f}</Text>
+            </View>
           </View>
 
           <MenuProvider>
@@ -278,7 +288,7 @@ export default function HomePage({ navigation }) {
               icon="camera-iris"
               style={styles.buttontextacc}
               mode="contained-tonal"
-              onPress={() => toPPage()}
+              onPress={() => tocamera()}
               title="Food+"
             ></Button>
           </View>
@@ -401,6 +411,12 @@ const styles = StyleSheet.create({
   rcalt2: {
     fontSize: 70,
     flex: 5,
+  },
+
+  ncount:{
+    flexDirection:"row",
+    justifyContent:"space-around",
+    width:"100%"
   },
 
   card: {

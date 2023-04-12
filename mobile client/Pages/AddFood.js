@@ -20,6 +20,8 @@ const AddFood = ({navigation}) => {
   let data = useSelector((state) => state.getfood.data);
   const date = useSelector((state) => state.date.date);
   const auth = useSelector((state) => state.auth);
+  const URL = useSelector(state => state.url.URL);
+
 
 
   const [selectedFood, setselectedFood] = React.useState([
@@ -28,6 +30,7 @@ const AddFood = ({navigation}) => {
     -1,
     "",
     "",
+    {}
   ]);
 
   const [pickervalues, setpickervalues] = React.useState([
@@ -86,6 +89,9 @@ const AddFood = ({navigation}) => {
         date: date,
         time: formattedTime,
         slot: "Auto",
+        carbs:0,
+        protiens:0,
+        fats:0
       });
       console.log(udata);
     }
@@ -141,33 +147,38 @@ const AddFood = ({navigation}) => {
 
   const submit = () => {
     udata.map((item)=>{
-      if(item.weight==''||item.weight==0){
+      if(item.weight==''){
         ToastAndroid.show('Please enter weights for all entries', ToastAndroid.SHORT);
-        return;
+      }
+      else if(item.weight==0){
+        ToastAndroid.show('Please enter weights for all entries', ToastAndroid.SHORT);
+      }
+      else{
+        console.log(udata);
+        fetch(`${URL}/api/addfood`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+          body: JSON.stringify({
+            id:auth.user,
+            data: udata,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if(data=="added"){
+              ToastAndroid.show('Entries Addded Successfully', ToastAndroid.SHORT);
+              toHome()
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     })
 
-    console.log(udata);
-    fetch("http://192.168.0.104:3000/api/addfood", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      body: JSON.stringify({
-        id:auth.user,
-        data: udata,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if(data=="added"){
-          ToastAndroid.show('Entries Addded Successfully', ToastAndroid.SHORT);
-          toHome()
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+
   };
 
   return (
@@ -273,6 +284,9 @@ const AddFood = ({navigation}) => {
                   item.weight * item.stdc * 0.01
                 )} cal`}</Text>
               </View>
+            <View>
+              
+            </View>
             </View>
           </View>
         ))}
