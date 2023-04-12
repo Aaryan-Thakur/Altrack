@@ -8,24 +8,20 @@ import { Picker } from "@react-native-picker/picker";
 import { useState, useEffect } from "react";
 import FoodItem from "./FoodItem";
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setTGC } from "../state";
 
 const Entry = (props) => {
-
   let trigger = useSelector((state) => state.tgc);
   const dispatch = useDispatch();
-  const URL = useSelector(state => state.url.URL);
-
+  const URL = useSelector((state) => state.url.URL);
 
   const navigation = useNavigation();
 
-
-
   const data = props.route.params.data;
-  console.log(data)
+  console.log(data);
   const date = useSelector((state) => state.date.date);
 
   const [pickervalues, setpickervalues] = React.useState([
@@ -71,6 +67,7 @@ const Entry = (props) => {
       .then((response) => response.json())
       .then((data) => {
         setfetchdata(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error(error);
@@ -85,7 +82,7 @@ const Entry = (props) => {
         routes: [{ name: "Home" }],
       })
     );
-  }
+  };
 
   const update = () => {
     fetch(`${URL}/api/uentry`, {
@@ -96,15 +93,18 @@ const Entry = (props) => {
       body: JSON.stringify({
         id: data.foodid,
         weight: Weight,
-        cal:  Weight * fetchdata.cal * 0.01,
+        cal: Weight * fetchdata.cal * 0.01,
         slot: Slot,
+        carb: Math.round(Weight * fetchdata.carb * 0.01),
+        protein: Math.round(Weight * fetchdata.protein * 0.01),
+        fat: Math.round(Weight * fetchdata.fat * 0.01),
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
-        toHome()
-        dispatch(setTGC())
+        console.log(data);
+        toHome();
+        dispatch(setTGC());
       })
       .catch((error) => {
         console.error(error);
@@ -137,7 +137,6 @@ const Entry = (props) => {
           ))}
         </Picker>
 
-
         <View style={styles.containerF}>
           <View style={styles.weight}>
             <TextInput
@@ -158,8 +157,16 @@ const Entry = (props) => {
             icon="check"
             style={styles.button}
             labelStyle={styles.buttonL}
-            onPress={()=>{update()}}
+            onPress={() => {
+              update();
+            }}
           ></Button>
+        </View>
+
+        <View style={styles.ncount}>
+          <Text>Carb:{Math.round(Weight * fetchdata.carb * 0.01)}</Text>
+          <Text>Protein:{Math.round(Weight * fetchdata.protein * 0.01)}</Text>
+          <Text>Fat:{Math.round(Weight * fetchdata.fat * 0.01)}</Text>
         </View>
       </View>
       <FoodItem data={fetchdata} />
@@ -186,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   card: {
-    minHeight: 120,
+    minHeight: 150,
     alignItems: "center",
     backgroundColor: "#f0e9f3",
     borderColor: "black",
@@ -219,6 +226,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     justifyContent: "flex-end",
     marginLeft: 15,
+  },
+  ncount: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
   weightinput: {
     backgroundColor: "#e8e1ed",

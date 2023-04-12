@@ -73,7 +73,7 @@ async function getFoodData(req, res) {
   });
 
   await client.connect();
-  result = await client.query(`SELECT * FROM fcirdata`);
+  result = await client.query(`SELECT * FROM fcirdata2`);
   client.end();
 
   console.log(result.rows)
@@ -155,7 +155,7 @@ async function entryInfo(req, res) {
   });
 
   await client.connect();
-  result = await client.query(`SELECT * FROM fcirdata WHERE id = ${req.body.id}`);
+  result = await client.query(`SELECT * FROM fcirdata2 WHERE id = ${req.body.id}`);
   console.log(req.body)
   console.log(result.rows)
   client.end();
@@ -165,6 +165,7 @@ async function entryInfo(req, res) {
 }
 
 async function updateEntry(req, res) {
+  console.log(req.body)
   const client = new Client({
     host: "localhost",
     user: "postgres",
@@ -174,7 +175,7 @@ async function updateEntry(req, res) {
   });
 
   await client.connect();
-  await client.query(`UPDATE fooddata SET weight=${req.body.weight},slot='${req.body.slot}',calories=${req.body.cal} WHERE foodid=${req.body.id}`);
+  await client.query(`UPDATE fooddata SET weight=${req.body.weight},slot='${req.body.slot}',calories=${req.body.cal},carbs=${req.body.carb},proteins=${req.body.protein},fats=${req.body.fat} WHERE foodid=${req.body.id}`);
   client.end();
 
   
