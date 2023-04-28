@@ -7,23 +7,23 @@ import { Searchbar } from 'react-native-paper';
 import { StyleSheet } from "react-native";
 import FoodItem from "./FoodItem";
 
-const FoodBrowser = ({navigation}) => {
+const ExerBrowser = ({navigation}) => {
   const [page, setpage] = React.useState(0);
 
   const URL = useSelector((state) => state.url.URL);
-  const data = useSelector((state) => state.getfood.data);
+  const data = useSelector((state) => state.exer.exerdata);
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
   const filteredData = data.filter((item) =>
-  item.food.toLowerCase().includes(searchQuery.toLowerCase())
+  item.name.toLowerCase().includes(searchQuery.toLowerCase())
 );
 
-function toFoodItem(item) {
-  navigation.navigate("FoodItemTest",{props:item});
-}
+function toExer(item) {
+    navigation.navigate("Exercises",{props:item});
+  }
 
   return (
     <View>
@@ -31,13 +31,11 @@ function toFoodItem(item) {
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        style={styles.bar}
       />
-      <Pressable style={styles.title}><Text>name</Text><Text>calories</Text></Pressable>
       <FlatList
         data={filteredData}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Pressable style={styles.button} onPress={()=>{toFoodItem(item)}}><Text style={styles.label}>{item.food}</Text><Text style={styles.label}>{item.cal}</Text></Pressable>}
+        renderItem={({ item }) => <Pressable style={styles.button} onPress={()=>{toExer(item)}}><Text style={styles.label}>{item.name}</Text></Pressable>}
       />
     </View>
   );
@@ -49,21 +47,19 @@ const styles = StyleSheet.create({
     padding:10,
     margin:2,
     flexDirection:"row",
-    justifyContent:"space-between",
+    justifyContent:"center",
   },
   label:{
-    fontSize:20
+    fontSize:15
   },
   title:{
     flexDirection:"row",
     justifyContent:"space-between",
     padding:10
-  },
-  bar:{
   }
 
 });
 
 
 
-export default FoodBrowser;
+export default ExerBrowser;

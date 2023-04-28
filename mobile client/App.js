@@ -39,7 +39,11 @@ import RecipeB from "./Pages/RecipeB";
 import AddFood from "./Pages/AddFood";
 import Entry from "./Pages/Entry";
 import CameraPage from "./Pages/CameraPage";
-
+import FoodItemTest from "./Pages/FoodItemTest";
+import ExerBrowser from "./Pages/ExerBrowser";
+import Exercises from "./Pages/Exercises";
+import Profile from "./Pages/Profile";
+import EditProfile from "./Pages/EditProfile";
 const store = configureStore({
   reducer: rootReducer,
 });
@@ -58,12 +62,32 @@ export default function App() {
             component={HomePage}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="FoodB" component={FoodBrowser} />
+          <Stack.Screen
+            name="FoodB"
+            component={FoodBrowser}
+            options={{ title: "Recipe Browser" }}
+          />
           <Stack.Screen name="RecipeB" component={RecipeB} />
-          <Stack.Screen name="AddFood" component={AddFood} />
+          <Stack.Screen
+            name="AddFood"
+            component={AddFood}
+            options={{ title: "Log Food" }}
+          />
           <Stack.Screen name="Entry" component={Entry} />
           <Stack.Screen name="Camera" component={CameraPage} />
-
+          <Stack.Screen
+            name="FoodItemTest"
+            component={FoodItemTest}
+            options={{ title: "Food" }}
+          />
+          <Stack.Screen
+            name="ExerBrowser"
+            component={ExerBrowser}
+            options={{ title: "Exercises" }}
+          />
+          <Stack.Screen name="Exercises" component={Exercises} />
+          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

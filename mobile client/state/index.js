@@ -28,6 +28,9 @@ const initialData = {
   data:"null"
 }
 
+const initialexerData = {
+  exerdata:"null"
+}
 const initialTGC={
   delete:0
 }
@@ -69,6 +72,17 @@ export const foodSlice = createSlice({
   },
 });
 
+
+export const exercise = createSlice({
+  name: "exer",
+  initialState: initialexerData,
+  reducers: {
+    setExer:(state,action)=>{
+        state.exerdata=action.payload.exerdata
+    },
+  },
+});
+
 export const getfoodSlice = createSlice({
   name: "getfood",
   initialState: initialData,
@@ -106,6 +120,7 @@ const rootReducer = combineReducers({
   getfood: getfoodSlice.reducer,
   tgc: TGCSlice.reducer,
   url: urlSlice.reducer,
+  exer: exercise.reducer
 
 
 });
@@ -115,6 +130,8 @@ export const {setDate} = dateSlice.actions;
 export const {setFood} = foodSlice.actions;
 export const {setFoodData} = getfoodSlice.actions;
 export const {setTGC} = TGCSlice.actions;
+export const {setExer} = exercise.actions;
+
 
 
 

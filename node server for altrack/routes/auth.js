@@ -13,9 +13,6 @@ router.post('/login', function(req, res, next) {
   auth.login(req,res);
 });
 
-router.get('/data', function(req, res, next) {
-  data.getdata(req,res);
-});
 
 router.post('/food', function(req, res, next) {
   food.fooddata(req,res);
@@ -25,6 +22,9 @@ router.get('/getfood', function(req, res, next) {
   food.getFoodData(req,res);
 });
 
+router.get('/exercise', function(req, res, next) {
+  food.getExercise(req,res);
+});
 
 router.post('/addfood', function(req, res, next) {
   food.addUserFoodData(req,res);
@@ -41,6 +41,16 @@ router.post('/entry', function(req, res, next) {
 router.post('/uentry', function(req, res, next) {
   food.updateEntry(req,res);
 });
+
+router.post('/userdata', function(req, res, next) {
+  auth.userdata(req,res);
+});
+router.post('/updateUserData', function(req, res, next) {
+  auth.updateUserData(req,res);
+});
+
+
+
 
 
 module.exports = router;

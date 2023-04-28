@@ -7,6 +7,9 @@ import { setLogin } from '../state';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import Config from "react-native-config";
+import { useEffect } from 'react';
+import { setFoodData } from '../state';
+import { setExer } from '../state';
 
 
 
@@ -17,6 +20,32 @@ const Login = ({navigation}) => {
   const token = useSelector(state => state.auth.token);
 
   const URL = useSelector(state => state.url.URL);
+
+  const data1 = useSelector((state) => state.getfood.data);
+  const data2 = useSelector((state) => state.exer.exerdata);
+
+  useEffect(() => {
+    fetch(`${URL}/api/getfood`)
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(setFoodData({ data: data }));
+        console.log(data1)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+      fetch(`${URL}/api/exercise`)
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(setExer({ exerdata: data }));
+        console.log(data2)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  
 
 
 
@@ -48,8 +77,6 @@ const Login = ({navigation}) => {
     .catch((error) => {
       console.error('Error:', error);
     });
-
-
   };
 
 
@@ -162,7 +189,6 @@ const Login = ({navigation}) => {
     <Button style={styles.button} mode="contained" onPress={handleSubmit(submit)}>login</Button>
 
     <View><Text>Don't have an account?</Text><Button onPress={()=> toregister()} >Click here</Button></View>
-    <View><Button onPress={()=> toHome()} >Demo</Button></View>
 
 
     </View>

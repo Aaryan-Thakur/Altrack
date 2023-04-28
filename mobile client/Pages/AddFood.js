@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -15,12 +15,12 @@ import { Searchbar, Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { compose } from "@reduxjs/toolkit";
+import { parse } from "date-fns";
+
 
 const AddFood = (props) => {
-  if(!(props.route.params==undefined)){
-    console.log(props.route.params.prediction[0].class)
-    
-  }
   const navigation = useNavigation();
 
   let data = useSelector((state) => state.getfood.data);
@@ -49,6 +49,9 @@ const AddFood = (props) => {
 
   let [udata, setuData] = React.useState([]);
 
+
+
+
   const onChangeSearch = (query) => {
     setselectedFood([query.length > 0, query, -1, "", "", {}]);
   };
@@ -73,6 +76,38 @@ const AddFood = (props) => {
     return result ? true : false;
   };
 
+  if (!(props.route.params == undefined)) {
+    if(!checkifalreadyexists(props.route.params.item.id)){
+      console.log("asodniandiasndsi");
+      item = props.route.params.item;
+      // const currentTime = new Date();
+      // const formattedTime = currentTime.toLocaleTimeString([], {
+      //   hour: "2-digit",
+      //   minute: "2-digit",
+      //   second: "2-digit",
+      // });
+
+      let currentDate = new Date();
+      let currentTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+
+      udata.push({
+        id: item.id,
+        food: item.food,
+        imgurl: item.url,
+        weight: 0,
+        cal: 0,
+        stdc: item.cal,
+        date: date,
+        time: currentTime,
+        slot: "Auto",
+        ndata: { c: item.carb, p: item.protein, f: item.fat },
+        carbs: 0,
+        protiens: 0,
+        fats: 0,
+      });
+    }
+  }
+
   const onAdd = (props) => {
     console.log(props.ndata);
     if (
@@ -80,12 +115,10 @@ const AddFood = (props) => {
       props.food != "" &&
       !checkifalreadyexists(props.id)
     ) {
-      const currentTime = new Date();
-      const formattedTime = currentTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
+      // const currentTime = new Date();
+      // const formattedTime = currentTime.toLocaleTimeString();
+      let currentDate = new Date();
+      let currentTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
 
       setselectedFood([false, "", -1, "", "", {}]);
 
@@ -97,9 +130,9 @@ const AddFood = (props) => {
         cal: 0,
         stdc: props.stdc,
         date: date,
-        time: formattedTime,
+        time: currentTime,
         slot: "Auto",
-        ndata:props.ndata,
+        ndata: props.ndata,
         carbs: 0,
         protiens: 0,
         fats: 0,
@@ -121,15 +154,15 @@ const AddFood = (props) => {
             ...item,
             weight: props.value,
             cal: Math.round(item.stdc * props.value * 0.01),
-            carbs:Math.round(item.ndata.c * 0.01 * props.value),
-            protiens:Math.round(item.ndata.p * 0.01 * props.value),
-            fats:Math.round(item.ndata.f * 0.01 * props.value),
+            carbs: Math.round(item.ndata.c * 0.01 * props.value),
+            protiens: Math.round(item.ndata.p * 0.01 * props.value),
+            fats: Math.round(item.ndata.f * 0.01 * props.value),
           };
         }
         return item;
       });
       setuData(updatedData);
-      console.log(updatedData)
+      console.log(updatedData);
     }
   };
 
@@ -157,50 +190,60 @@ const AddFood = (props) => {
   }
 
   const submit = () => {
+    let valid = true
     udata.map((item) => {
       if (item.weight == "") {
         ToastAndroid.show(
           "Please enter weights for all entries",
           ToastAndroid.SHORT
         );
+        valid = false
       } else if (item.weight == 0) {
         ToastAndroid.show(
           "Please enter weights for all entries",
           ToastAndroid.SHORT
         );
+        valid = false
       } else {
-        fetch(`${URL}/api/addfood`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-          body: JSON.stringify({
-            id: auth.user,
-            data: udata,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data == "added") {
-              ToastAndroid.show(
-                "Entries Addded Successfully",
-                ToastAndroid.SHORT
-              );
-              toHome();
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        
+        valid=true;
       }
     });
+    if(valid){
+      fetch(`${URL}/api/addfood`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+          id: auth.user,
+          data: udata,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data == "added") {
+            ToastAndroid.show(
+              "Entries Addded Successfully",
+              ToastAndroid.SHORT
+            );
+            toHome();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
+
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const [day, setday] = useState(days[parse(date, "dd/MM/yy", new Date()).getDay()])
 
   return (
     <KeyboardAvoidingView style={styles.maincontainer}>
       <View>
         <View style={styles.datecontainer}>
-          <Text style={styles.date}>{date}</Text>
+          <Text style={styles.date}>{date}     {day}</Text>
         </View>
       </View>
 
@@ -286,7 +329,7 @@ const AddFood = (props) => {
                 <TextInput
                   value={item.weight.toString()}
                   onChangeText={(value) =>
-                    onWeightUpdate({ value: value, id: item.id})
+                    onWeightUpdate({ value: value, id: item.id })
                   }
                   keyboardType="numeric"
                   style={styles2.weightinput}
@@ -301,7 +344,9 @@ const AddFood = (props) => {
             </View>
             <View style={styles2.ncount}>
               <Text>Carb:{Math.round(item.ndata.c * 0.01 * item.weight)}</Text>
-              <Text>Protein:{Math.round(item.ndata.p * 0.01 * item.weight)}</Text>
+              <Text>
+                Protein:{Math.round(item.ndata.p * 0.01 * item.weight)}
+              </Text>
               <Text>Fat:{Math.round(item.ndata.f * 0.01 * item.weight)}</Text>
             </View>
           </View>

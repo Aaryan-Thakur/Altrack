@@ -81,6 +81,25 @@ async function getFoodData(req, res) {
   res.status(201).json(result.rows);
 }
 
+async function getExercise(req, res) {
+  const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "Aaryan@sql31",
+    database: "altrack",
+  });
+
+  await client.connect();
+  result = await client.query(`SELECT * FROM excercise`);
+  client.end();
+
+  console.log(result.rows)
+
+  res.status(201).json(result.rows);
+}
+
+
 async function addUserFoodData(req, response) {
   const client = new Client({
     host: "localhost",
@@ -140,7 +159,6 @@ async function delentry(req, res) {
   client.end();
 
   fooddata
-
   res.status(201).json("deleted");
 
 }
@@ -183,4 +201,4 @@ async function updateEntry(req, res) {
 }
 
 
-module.exports = { fooddata, getFoodData, addUserFoodData,delentry,entryInfo,updateEntry };
+module.exports = { fooddata, getFoodData, addUserFoodData,delentry,entryInfo,updateEntry,getExercise };

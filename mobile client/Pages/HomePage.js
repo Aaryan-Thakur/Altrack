@@ -11,7 +11,9 @@ import { MenuProvider } from "react-native-popup-menu";
 
 export default function HomePage({ navigation }) {
   const dispatch = useDispatch();
-  const data1 = useSelector((state) => state.getfood.data);
+
+
+
 
   const delcount = useSelector((state) => state.tgc);
   const URL = useSelector(state => state.url.URL);
@@ -21,17 +23,6 @@ export default function HomePage({ navigation }) {
   let [nutri, setnutri] = useState({c:0,p:0,f:0});
 
 
-  useEffect(() => {
-    fetch(`${URL}/api/getfood`)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(setFoodData({ data: data }));
-        console.log(data1)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
 
   // DATE CONFIG
   const date = useSelector((state) => state.date.date);
@@ -54,9 +45,22 @@ export default function HomePage({ navigation }) {
     }
   };
 
+let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const [day, setday] = useState(days[parse(date, "dd/MM/yy", new Date()).getDay()])
+
+  useEffect(() => {
+    setday(days[parse(date, "dd/MM/yy", new Date()).getDay()])
+  }, [date]);
+
   //FOOD CONFIG
   let food = useSelector((state) => state.food.food);
   let auth = useSelector((state) => state.auth);
+
+  // const [day, setday] = useState(days[parse(date, "dd/MM/yy", new Date()).getDay()])
+
+
+
+  
 
   function getfood() {
     fetch(`${URL}/api/food`, {
@@ -119,6 +123,15 @@ export default function HomePage({ navigation }) {
     navigation.navigate("AddFood");
   }
 
+  function toExerBrowser() {
+    navigation.navigate("ExerBrowser");
+  }
+
+  
+  function toProfile() {
+    navigation.navigate("Profile");
+  }
+
   //Profile Menu
   const [visible, setVisible] = useState(false);
 
@@ -157,6 +170,7 @@ export default function HomePage({ navigation }) {
               labelStyle={styles.datearrow}
             ></Button>
             <Text style={styles.date}>{date}</Text>
+            <Text style={styles.date}>{day}</Text>
             <Button
               onPress={nextdate}
               icon="chevron-right"
@@ -165,7 +179,7 @@ export default function HomePage({ navigation }) {
           </View>
 
           <View style={styles.rcal}>
-            <Text style={styles.rcalt1}>Total Cal Count</Text>
+            <Text style={styles.rcalt1}>Total Calorie Count</Text>
             <Text style={styles.rcalt2}>{cal}</Text>
             <View style={styles.ncount}>
             <Text>Carb:{nutri.c}</Text>
@@ -273,16 +287,18 @@ export default function HomePage({ navigation }) {
               icon="food-apple"
             ></Button>
           </View>
+
           <View style={styles.button}>
             <Button
               style={styles.buttontext}
               mode="contained-tonal"
-              onPress={() => toRecipeB()}
-              title="Rec"
+              title="Exer"
+              onPress={()=>{toExerBrowser()}}
             >
-              Rec
+              Exe
             </Button>
           </View>
+
           <View style={styles.button}>
             <Button
               icon="camera-iris"
@@ -291,15 +307,6 @@ export default function HomePage({ navigation }) {
               onPress={() => tocamera()}
               title="Food+"
             ></Button>
-          </View>
-          <View style={styles.button}>
-            <Button
-              style={styles.buttontext}
-              mode="contained-tonal"
-              title="Exer"
-            >
-              Exe
-            </Button>
           </View>
 
           <View style={styles.button}>
@@ -323,13 +330,8 @@ export default function HomePage({ navigation }) {
               <Divider />
               <Menu.Item
                 titleStyle={styles.menuProfile}
-                onPress={() => {}}
+                onPress={() => {toProfile()}}
                 title="Profile"
-              />
-              <Menu.Item
-                titleStyle={styles.menuSettings}
-                onPress={() => {}}
-                title="Settings"
               />
               <Menu.Item
                 titleStyle={styles.menuLogout}

@@ -34,9 +34,16 @@ async function register(req, response) {
           console.log(err)
           response.status(500).json(err.constraint);
         }
-        client.end;
       }
-    );
+      );     
+      let result = await client.query(
+        `SELECT userid FROM users WHERE email='${email}'`
+      ); 
+     await client.query(
+        `INSERT INTO userdata VALUES (${result.rows[0].userid})`
+      ); 
+
+      client.end;
 
 
   } catch (err) {
@@ -87,4 +94,42 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login };
+async function userdata(req, res) {
+  const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "Aaryan@sql31",
+    database: "altrack",
+  });
+
+  await client.connect();
+  result1 = await client.query(`SELECT * FROM users WHERE userid=${req.body.uid}`);
+  result2 = await client.query(`SELECT * FROM userdata WHERE userid=${req.body.uid}`);
+
+  client.end();
+
+  res.status(201).json({data1:result1.rows,data2:result2.rows});
+}
+
+
+async function updateUserData(req, res) {
+  const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "Aaryan@sql31",
+    database: "altrack",
+  });
+
+  await client.connect();
+  await client.query(`UPDATE users SET fname='${req.body.fname}',lname='${req.body.lname}' WHERE userid=${req.body.uid}`);
+  await client.query(`UPDATE userdata SET height=${req.body.height}, weight=${req.body.weight}, gender='${req.body.gender}', tcal=${req.body.tcal} WHERE userid=${req.body.uid}`);
+
+  client.end();
+
+  res.status(201).json("successful");
+}
+
+
+module.exports = { register, login,userdata,updateUserData };
